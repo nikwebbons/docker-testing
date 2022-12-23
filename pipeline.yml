@@ -75,14 +75,14 @@ resources:
     <<: *docker_auth
     repository: spydernik/jenkins-sbt
 
-- name: jq
+- name: jenkins-jq
   type: registry-image
   icon: docker
   source:
     <<: *docker_auth
     repository: spydernik/jq
 
-- name: cm
+- name: jenkins-cm
   type: registry-image
   icon: docker
   source:
