@@ -3,7 +3,7 @@
 # Example:
 #   $ docker run -it onsdigital/jenkins-slave-scala:2.11.8 scala -version
 #
-FROM spydernik/jenkins-base
+FROM spydernik/jenkins-base:1.0.0
 ARG TOOL_VERSION
 
 LABEL uk.gov.ons.image.name="jenkins-scala"
