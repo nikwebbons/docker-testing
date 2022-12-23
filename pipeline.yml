@@ -7,14 +7,14 @@ resources:
     uri: https://github.com/nikwebbons/docker-testing
     branch: main
 
-# Where we will push the image to
-# - name: simple-image
-#   type: registry-image
-#   icon: docker
-#   source:
-#     repository: spydernik/docker-test-image
-#     username: ((registry-username))
-#     password: ((registry-password))
+#Where we will push the image to
+- name: simple-image
+  type: registry-image
+  icon: docker
+  source:
+    repository: spydernik/docker-test-image
+    username: ((registry-username))
+    password: ((registry-password))
 
 jobs:
 - name: build-and-push
@@ -29,10 +29,14 @@ jobs:
         source:
           repository: concourse/oci-build-task
       inputs:
-      - name: docker-testing
+      - name: docker-testing/jenkins-base
       outputs:
       - name: image
       params:
         CONTEXT: docker-testing
       run:
         path: build
+  - put: simple-image
+    params:
+      image: image/image.tar
+      version: 1.0.0
