@@ -1,0 +1,38 @@
+resources:
+# The repo with our Dockerfile
+- name: docker-testing
+  type: git
+  icon: github
+  source:
+    uri: https://github.com/nikwebbons/docker-testing
+    branch: main
+
+# Where we will push the image to
+- name: simple-image
+  type: registry-image
+  icon: docker
+  source:
+    repository: spydernik/docker-test-image
+    username: ((registry-username))
+    password: ((registry-password))
+
+jobs:
+- name: build-and-push
+  plan:
+  - get: docker-testing
+  - task: build-image
+    privileged: true # oci-build-task must run in a privileged container
+    config:
+      platform: linux
+      image_resource:
+        type: registry-image
+        source:
+          repository: concourse/oci-build-task
+      inputs:
+      - name: concourse-examples
+      outputs:
+      - name: image
+      params:
+        CONTEXT: concourse-examples
+      run:
+        path: build
