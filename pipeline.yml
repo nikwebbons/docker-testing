@@ -68,6 +68,27 @@ resources:
     <<: *docker_auth
     repository: spydernik/jenkins-maven
 
+- name: jenkins-sbt
+  type: registry-image
+  icon: docker
+  source:
+    <<: *docker_auth
+    repository: spydernik/jenkins-sbt
+
+- name: jq
+  type: registry-image
+  icon: docker
+  source:
+    <<: *docker_auth
+    repository: spydernik/jq
+
+- name: cm
+  type: registry-image
+  icon: docker
+  source:
+    <<: *docker_auth
+    repository: spydernik/cm
+
 jobs:
 - name: jenkins-base
   plan:
@@ -144,6 +165,34 @@ jobs:
     params:
       image: image/image.tar
       version: 2.12.7
+
+- name: jenkins-sbt-1.2.4
+  plan:
+  - get: jenkins-git
+    passed: [jenkins-scala-2.12.7]
+  - task: build-image
+    privileged: true # oci-build-task must run in a privileged container
+    config:
+      platform: linux
+      image_resource:
+        type: registry-image
+        source:
+          repository: concourse/oci-build-task
+      inputs:
+      - name: jenkins-git
+      outputs:
+      - name: image
+      params:
+        CONTEXT: jenkins-git/sbt
+        BUILD_ARG_TOOL_VERSION: 1.2.4
+        BUILD_ARG_MAJOR_MINOR_VERSION: 1.1
+        BUILD_ARG_TOOL_DEPENDENCY_VERSION: 2.12.7
+      run:
+        path: build
+  - put: jenkins-sbt
+    params:
+      image: image/image.tar
+      version: 1.2.4
 
 - name: jenkins-scala-2-13-4
   plan:
@@ -539,3 +588,83 @@ jobs:
     params:
       image: image/image.tar
       version: 3.6.3
+
+- name: jenkins-jq-1.6
+  plan:
+  - get: jenkins-git
+    passed: [jenkins-base]
+  - task: build-image
+    privileged: true # oci-build-task must run in a privileged container
+    config:
+      platform: linux
+      image_resource:
+        type: registry-image
+        source:
+          repository: concourse/oci-build-task
+      inputs:
+      - name: jenkins-git
+      outputs:
+      - name: image
+      params:
+        CONTEXT: jenkins-git/jq
+        BUILD_ARG_TOOL_VERSION: 1.6
+      run:
+        path: build
+  - put: jenkins-jq
+    params:
+      image: image/image.tar
+      version: 1.6
+
+- name: jenkins-cm-1.0
+  plan:
+  - get: jenkins-git
+    passed: [jenkins-node-12.16.2]
+  - task: build-image
+    privileged: true # oci-build-task must run in a privileged container
+    config:
+      platform: linux
+      image_resource:
+        type: registry-image
+        source:
+          repository: concourse/oci-build-task
+      inputs:
+      - name: jenkins-git
+      outputs:
+      - name: image
+      params:
+        CONTEXT: jenkins-git/cm
+        BUILD_ARG_TOOL_VERSION: 4.0.1
+        BUILD_ARG_PARENT_VERSION: 12.16.2
+      run:
+        path: build
+  - put: jenkins-cm
+    params:
+      image: image/image.tar
+      version: 1.0.0
+
+- name: jenkins-cm-2.0
+  plan:
+  - get: jenkins-git
+    passed: [jenkins-node-15.3.0]
+  - task: build-image
+    privileged: true # oci-build-task must run in a privileged container
+    config:
+      platform: linux
+      image_resource:
+        type: registry-image
+        source:
+          repository: concourse/oci-build-task
+      inputs:
+      - name: jenkins-git
+      outputs:
+      - name: image
+      params:
+        CONTEXT: jenkins-git/cm
+        BUILD_ARG_TOOL_VERSION: 4.0.1
+        BUILD_ARG_PARENT_VERSION: 15.3.0
+      run:
+        path: build
+  - put: jenkins-cm
+    params:
+      image: image/image.tar
+      version: 2.0.0
