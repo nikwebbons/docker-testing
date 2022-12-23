@@ -8,13 +8,13 @@ resources:
     branch: main
 
 # Where we will push the image to
-- name: simple-image
-  type: registry-image
-  icon: docker
-  source:
-    repository: spydernik/docker-test-image
-    username: ((registry-username))
-    password: ((registry-password))
+# - name: simple-image
+#   type: registry-image
+#   icon: docker
+#   source:
+#     repository: spydernik/docker-test-image
+#     username: ((registry-username))
+#     password: ((registry-password))
 
 jobs:
 - name: build-and-push
@@ -29,10 +29,10 @@ jobs:
         source:
           repository: concourse/oci-build-task
       inputs:
-      - name: concourse-examples
+      - name: docker-testing
       outputs:
       - name: image
       params:
-        CONTEXT: concourse-examples
+        CONTEXT: docker-testing
       run:
         path: build
