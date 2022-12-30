@@ -1,4 +1,3 @@
-privileged: true # oci-build-task must run in a privileged container
 platform: linux
 image_resource:
   type: registry-image
