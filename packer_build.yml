@@ -1,0 +1,15 @@
+privileged: true # oci-build-task must run in a privileged container
+config:
+  platform: linux
+  image_resource:
+    type: registry-image
+    source:
+      repository: concourse/oci-build-task
+  inputs:
+  - name: repo-name
+  outputs:
+  - name: image
+  params:
+    CONTEXT: folder-name
+  run:
+    path: build
