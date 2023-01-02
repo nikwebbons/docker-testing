@@ -4,7 +4,7 @@ image_resource:
   source:
     repository: concourse/oci-build-task
 inputs:
-  - name: jenkins-git
+  - name: repo-name
 outputs:
   - name: image
 params:
